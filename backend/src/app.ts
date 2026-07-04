@@ -7,12 +7,14 @@ import cookieParser from "cookie-parser";
 import healthRouter from "./routes/health.routes";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import authRoutes from './routes/auth.routes';
 
 const app = express();
 app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", healthRouter);
+app.use('/api/auth', authRoutes);
 
 app.use(helmet()); 
 
