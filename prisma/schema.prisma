@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  COMPANY
+  ADMIN
+}
+
+enum TenderStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  users     User[]
+  tenders   Tender[]
+  bids      Bid[]
+}
+
+model User {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  role      Role    @default(COMPANY)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Tender {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  deadline    DateTime
+  status      TenderStatus @default(DRAFT)
+
+  companyId   String
+  company     Company      @relation(fields: [companyId], references: [id])
+
+  bids        Bid[]
+
+  createdAt   DateTime @default(now())
+}
+
+model Bid {
+  id              String   @id @default(uuid())
+  amount          Float
+  technicalDocUrl String
+  financialDocUrl String
+
+  tenderId        String
+  tender          Tender   @relation(fields: [tenderId], references: [id])
+
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id])
+
+  createdAt       DateTime @default(now())
+
+  @@unique([tenderId, companyId])
+}
