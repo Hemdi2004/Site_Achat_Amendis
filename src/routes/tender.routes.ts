@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { TenderController } from '../controllers/tender.controller.js';
 import { authenticate } from '../middlewares/auth.middleware.js';
+import { authorize } from '../middlewares/authorize.middleware.js';
 import { validate } from '../middlewares/validate.middleware.js';
+import { Role } from '../generated/prisma/enums.js';
 import {
   createTenderSchema,
   tenderIdSchema,
@@ -17,6 +19,7 @@ router.get(
 router.post(
   '/',
   authenticate,
+  authorize(Role.COMPANY),
   validate(createTenderSchema),
   TenderController.create
 );
@@ -24,6 +27,7 @@ router.post(
 router.patch(
   '/:tenderId/publish',
   authenticate,
+  authorize(Role.COMPANY),
   validate(tenderIdSchema),
   TenderController.publish
 );// patch is used to update the status of a tender to "PUBLISHED". It requires authentication and validation of the tenderId parameter. The TenderController.publish method handles the logic for publishing the tender.

@@ -1,11 +1,12 @@
 
 import jwt from 'jsonwebtoken';
 import {env} from '../config/env.js'
+import { Role } from '../generated/prisma/enums.js';
 
 export interface JwtPayload{
     userId: string;
-    companyId?: string;
-    role: 'COMPANY' | 'ADMIN';
+    companyId?: string | undefined;
+    role: Role;
 }
 
 export function generateToken(payload: JwtPayload): string{

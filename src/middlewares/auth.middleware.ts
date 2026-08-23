@@ -1,17 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError } from '../utils/error.js';
 import { verifyToken } from '../utils/JWT.js';
+import { Role } from '../generated/prisma/enums.js';
+
 
 export interface AuthenticatedUser {
   userId: string;
-  companyId?: string;
-  role: 'COMPANY' | 'ADMIN';
+  companyId?: string | undefined;
+  role: Role;
 } // the authenticated user interface 
 
 declare global {// declare global is used to extend the global namespace in TypeScript. In this case, we are extending the Express namespace to include a user property on the Request interface.
   namespace Express {// A namespace is a way to group related code together. In this case, we are grouping the extension of the Express namespace. and an extension is a way to add new properties or methods to an existing class or interface. In this case, we are adding a user property to the Request interface.
     interface Request {// and an interface is a way to define the shape of an object. In this case, we are defining the shape of the Request object to include a user property. An interface and an object are similar in that they both define the shape of an object, but an interface is more flexible and can be extended or implemented by other interfaces or classes. An object is a concrete instance of a type, while an interface is a blueprint for a type.
-      user?: AuthenticatedUser;// this tells typescript that the user property is optional and can be of type AuthenticatedUser
+      user: AuthenticatedUser;// this tells typescript that the user property is optional and can be of type AuthenticatedUser
     }
   }
 }
@@ -39,7 +41,7 @@ export function authenticate(// function authenticate is a middleware function t
     req.user = payload;
 
     next();
-  } catch {
+  } catch(error) {
     next(new UnauthorizedError('Invalid or expired token'));// this the UnauthorizedError class that is imported from the error.ts file. It is used to create a new instance of the UnauthorizedError class with a custom error message. The next function is called with this error instance to pass control to the error-handling middleware, which will send an appropriate response back to the client.
   }
 } // when you export for example in this page function authenticate, you can import it in other files using the import statement. For example, you can import it in a route file and use it as a middleware for specific routes that require authentication. and you can access the authenticated user information in the route handler by accessing req.user, which will contain the decoded payload from the JWT token.

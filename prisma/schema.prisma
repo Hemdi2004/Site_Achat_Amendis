@@ -41,7 +41,7 @@ model User {
   password  String
   role      Role    @default(COMPANY)
 
-  companyId String?
+  companyId String
   company   Company? @relation(fields: [companyId], references: [id])
 
   createdAt DateTime @default(now())
@@ -55,7 +55,7 @@ model Tender {
   status      TenderStatus @default(DRAFT)
 
   companyId   String
-  company     Company      @relation(fields: [companyId], references: [id])
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   bids        Bid[]
 

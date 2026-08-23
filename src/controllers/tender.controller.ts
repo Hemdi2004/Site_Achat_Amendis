@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { TenderService } from '../services/tender.service.js';
+import { UnauthorizedError } from '../utils/error.js';
 
 export class TenderController {
   static async create(
@@ -8,12 +9,20 @@ export class TenderController {
     next: NextFunction
   ) {
     try {
+
+          // 1. Récupération sécurisée du companyId sans forcer avec "!"
+    const companyId = req.user?.companyId;
+
+    // 2. Blocage immédiat si l'utilisateur n'est pas identifié ou lié à une entreprise
+    if (!companyId) {
+      throw new UnauthorizedError('Company ID is missing from user session');
+    }
       const tender = await TenderService.createTender({
         title: req.body.title,
         description: req.body.description,
         deadline: req.body.deadline,
-        companyId: req.user!.companyId!,// this line is accessing the companyId property of the user object attached to the request (req.user). The exclamation mark (!) is a TypeScript non-null assertion operator, which tells the compiler that we are confident that req.user and req.user.companyId are not null or undefined at this point in the code. This is important because it allows us to safely access the companyId without TypeScript raising an error about potential null or undefined values.
-      });
+        companyId: companyId,
+});
 
       return res.status(201).json(tender);
     } catch (error) {

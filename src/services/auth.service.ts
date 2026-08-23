@@ -56,8 +56,10 @@ export class AuthService {// export class AuthService is a TypeScript feature th
     });
 
     return {
-      company,
-      token,
+      id: company.id,
+      email: company.email,
+      token
+  
     };// this line is returning an object that contains the newly created company record and the generated JWT token. The "company" property holds the details of the company that was just registered, while the "token" property contains the authentication token that can be used for subsequent requests to authenticate the user. This return value can be sent back to the client as a response to indicate successful registration and provide the necessary information for further interactions with the API.
   }
 
@@ -81,14 +83,21 @@ export class AuthService {// export class AuthService is a TypeScript feature th
       throw new UnauthorizedError('Invalid email or password');
     }
 
+    const companyId = user.companyId;
+    if (user.role === 'COMPANY' && !companyId) {
+      throw new UnauthorizedError('Invalid company account: no company associated with this user.');
+    };
+
     const token = generateToken({
       userId: user.id,
-    //   companyId: user.companyId ?? undefined,// this line is using the nullish coalescing operator (??) to check if the user.companyId is null or undefined. If it is, the value will be set to undefined; otherwise, it will use the actual value of user.companyId. This ensures that if the companyId is not present for the user, it will not be included in the token payload, preventing potential issues with token generation and validation.
+      companyId: companyId ?? undefined, // this line is using the nullish coalescing operator (??) to check if the user.companyId is null or undefined. If it is, the value will be set to undefined; otherwise, it will use the actual value of user.companyId. This ensures that if the companyId is not present for the user, it will not be included in the token payload, preventing potential issues with token generation and validation.
       role: user.role,
     });// this line is generating a JSON Web Token (JWT) for the authenticated user. It calls the "generateToken" function, passing an object that contains the user's ID, the company's ID (if available), and the user's role. The generated token is a string that can be used for authentication in subsequent requests. The token is stored in the "token" variable for later use, such as returning it to the client after successful login.
 
     return {
       token,
+      message: "Logged in successfully",
+      companyId: companyId,
     };
   }
 }
