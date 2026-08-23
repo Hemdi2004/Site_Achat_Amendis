@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma.js';
-import { BadRequestError, NotFoundError } from '../utils/error.js';
+import { BadRequestError, NotFoundError, ConflictError } from '../utils/error.js';
 
 interface CreateBidInput {
   tenderId: string;
@@ -43,7 +43,7 @@ export class BidService {
     });
 
     if (existingBid) {
-      throw new BadRequestError(
+      throw new ConflictError(
         'Company has already submitted a bid'
       );
     }

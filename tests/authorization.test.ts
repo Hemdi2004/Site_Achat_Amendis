@@ -22,7 +22,9 @@ describe('Role-Based Access Control (RBAC) API', () => {
   let adminToken: string;
 
   beforeEach(async () => {
-    await prisma.tender.deleteMany({});
+    await prisma.tender.deleteMany({
+      where: {title: 'RBAC Test Tender' }
+    });
     // Clean up test users
     await prisma.user.deleteMany({
       where: { email: { in: [COMPANY_USER.email, ADMIN_USER.email] } },

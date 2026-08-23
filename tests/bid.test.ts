@@ -21,7 +21,9 @@ describe('Bids API', () => {
 
   beforeEach(async () => {
     // 1. Full Cleanup (Children -> Parents)
-    await prisma.bid.deleteMany({});
+    await prisma.bid.deleteMany({
+          
+    });
     await prisma.tender.deleteMany({ where: { title: 'Bid Target Tender' } });
     await prisma.user.deleteMany({
       where: { email: { in: [BIDDER_COMPANY.email, OWNER_COMPANY.email] } },
@@ -51,6 +53,8 @@ describe('Bids API', () => {
     
     const tender = tenderRes.body.data || tenderRes.body;
     tenderId = tender.id;
+    console.log(tenderId);
+    console.log(tender);
     await prisma.tender.update({
       where: { id: tenderId }, // 👈 Use the variable assigned on the line above
       data: { status: 'PUBLISHED' },});

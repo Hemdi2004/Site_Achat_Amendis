@@ -17,9 +17,9 @@ describe('Tenders API', () => {
 
   beforeEach(async () => {
     // Cleanup previous data
-    await prisma.tender.deleteMany({ where: { title: { contains: 'Test Tender' } } });
+    await prisma.tender.deleteMany({ where: { title: { contains: 'Test Tender 101' } } });
     await prisma.user.deleteMany({ where: { email: TEST_COMPANY.email } });
-
+    await prisma.company.deleteMany({where: {email: TEST_COMPANY.email }});
     // Register & obtain auth token
     await request(app).post('/auth/register').send(TEST_COMPANY);
     const loginRes = await request(app).post('/auth/login').send({
@@ -30,8 +30,9 @@ describe('Tenders API', () => {
   });
 
   afterAll(async () => {
-    await prisma.tender.deleteMany({ where: { title: { contains: 'Test Tender' } } });
+    await prisma.tender.deleteMany({ where: { title: { contains: 'Test Tender 101' } } });
     await prisma.user.deleteMany({ where: { email: TEST_COMPANY.email } });
+    await prisma.company.deleteMany({where: {email: TEST_COMPANY.email }});
     await prisma.$disconnect();
   });
 
