@@ -7,9 +7,14 @@ import { errorHandler } from './middlewares/error.middleware.js';
 
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec} from './docs/swagger.js';
+import cors from 'cors';
+import { env } from './config/env.js';
 
 const app = express();// istantiates the express app to configure apps and middlewares
 app.use(express.json());// used for parsing the body of incoming requests containing JSON
+
+app.use(cors({origin: env.CORS_ORIGIN, credentials: true,}));
+
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));// swagger docs
 

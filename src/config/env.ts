@@ -15,4 +15,5 @@ export const env = {
   port: port,
   jwtSecret: process.env.JWT_SECRET,
   DATABASE_URL: process.env.DATABASE_URL,
+  CORS_ORIGIN: process.env.CORS_ORIGIN,
 };
