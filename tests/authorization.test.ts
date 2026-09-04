@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach, afterAll } from 'vitest';
 import request from 'supertest';
 import app from '../src/app.js';
 import { prisma } from '../src/config/prisma';
-
+import { seedAdmin} from '../prisma/seed.js'
 
 
 const COMPANY_USER = {
@@ -12,7 +12,6 @@ const COMPANY_USER = {
 };
 
 const ADMIN_USER = {
-  companyName: 'Admin Entity',
   email: 'admin-rbac@example.com',
   password: 'Password123!',
 };
@@ -42,10 +41,10 @@ describe('Role-Based Access Control (RBAC) API', () => {
     companyToken = companyLoginRes.body.token || companyLoginRes.body.accessToken;
 
     // 2. Register/Seed Admin User (Update role directly in DB if register sets role to COMPANY)
-    await request(app).post('/auth/register').send(ADMIN_USER);
-    await prisma.user.update({
-      where: { email: ADMIN_USER.email },
-      data: { role: 'ADMIN' },
+   // Seed Admin directly using your exported helper
+    await seedAdmin({
+    adminEmail: ADMIN_USER.email,
+    adminPassword: ADMIN_USER.password,
     });
 
     const adminLoginRes = await request(app).post('/auth/login').send({
@@ -56,7 +55,7 @@ describe('Role-Based Access Control (RBAC) API', () => {
   });
 
   afterAll(async () => {
-    await prisma.tender.deleteMany({});
+    await prisma.tender.deleteMany({  where: {title: 'RBAC Test Tender' }});
     await prisma.user.deleteMany({
       where: { email: { in: [COMPANY_USER.email, ADMIN_USER.email] } },
     });

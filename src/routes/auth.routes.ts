@@ -11,14 +11,12 @@ const router = Router();
 
 router.post(
   '/register',
-  authRateLimiter,
   validate(registerSchema),
   AuthController.register
 );
 
 router.post(
   '/login',
-  authRateLimiter,
   validate(loginSchema),
   AuthController.login
 );

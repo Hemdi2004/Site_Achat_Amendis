@@ -3,6 +3,7 @@ import request from 'supertest';
 import app from '../src/app.js';
 import { prisma } from '../src/config/prisma';
 
+
 const BIDDER_COMPANY = {
   companyName: 'Bidder Corp LLC',
   email: 'bidder-test@example.com',
@@ -21,9 +22,7 @@ describe('Bids API', () => {
 
   beforeEach(async () => {
     // 1. Full Cleanup (Children -> Parents)
-    await prisma.bid.deleteMany({
-          
-    });
+    await prisma.bid.deleteMany({});
     await prisma.tender.deleteMany({ where: { title: 'Bid Target Tender' } });
     await prisma.user.deleteMany({
       where: { email: { in: [BIDDER_COMPANY.email, OWNER_COMPANY.email] } },
@@ -112,7 +111,7 @@ describe('Bids API', () => {
         technicalDocUrl: 'https://example.com/tech2.pdf',
         financialDocUrl: 'https://example.com/fin2.pdf',
       });
-
+    console.log(duplicateResponse.body);
     expect([400, 409]).toContain(duplicateResponse.status);
   });
 });

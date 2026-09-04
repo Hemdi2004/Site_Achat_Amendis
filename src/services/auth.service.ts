@@ -97,7 +97,13 @@ export class AuthService {// export class AuthService is a TypeScript feature th
     return {
       token,
       message: "Logged in successfully",
-      companyId: companyId,
+      user: {
+       id: user.id,
+       email: user.email,
+       role: user.role,
+       companyId: user.companyId,
+       createdAt: user.createdAt,
+  },
     };
   }
 }

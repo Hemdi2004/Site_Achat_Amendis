@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma.js';
-import { NotFoundError } from '../utils/error.js';
+import { ForbiddenError, NotFoundError } from '../utils/error.js';
 
 interface CreateTenderInput {
   title: string;
@@ -22,7 +22,7 @@ export class TenderService {
 
   static async publishTender(
     tenderId: string,
-    companyId: string
+    role: string
   ) {
     const tender = await prisma.tender.findUnique({
       where: {
@@ -30,12 +30,8 @@ export class TenderService {
       },
     });
 
-    if (!tender) {
-      throw new NotFoundError('Tender not found');
-    }
-
-    if (tender.companyId !== companyId) {
-      throw new NotFoundError('Tender not found');
+    if (role !== 'ADMIN') {
+      throw new ForbiddenError('Only an admin can publish a tender!');
     }
 
     return prisma.tender.update({
@@ -55,4 +51,11 @@ export class TenderService {
       },
     });
   }// this line is for retrieving all tenders that have been published. It uses the Prisma client to query the "tender" table and find all records where the "status" field is equal to 'PUBLISHED'. The result of this query is returned as an array of tender objects, which can be used to display the list of published tenders to users or for further processing in the application.
+   static async getDraftTenders() {
+      return prisma.tender.findMany({
+        where: {
+          status: 'DRAFT',
+        }
+      });
+    }
 }

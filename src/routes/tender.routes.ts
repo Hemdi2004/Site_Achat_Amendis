@@ -15,7 +15,10 @@ router.get(
   '/',
   TenderController.getPublished
 );
-
+router.get(
+  '/draft',
+  TenderController.getDraft
+);
 router.post(
   '/',
   authenticate,
@@ -27,7 +30,7 @@ router.post(
 router.patch(
   '/:tenderId/publish',
   authenticate,
-  authorize(Role.COMPANY),
+  authorize(Role.ADMIN),
   validate(tenderIdSchema),
   TenderController.publish
 );// patch is used to update the status of a tender to "PUBLISHED". It requires authentication and validation of the tenderId parameter. The TenderController.publish method handles the logic for publishing the tender.
