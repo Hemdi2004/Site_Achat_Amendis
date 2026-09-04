@@ -1,50 +1,82 @@
-# Welcome to your Expo app 👋
+# Site Achat Amendis
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+**Site Achat Amendis** is a full-stack digital procurement and tender management application developed to simplify the process of publishing tenders and submitting bids between companies and Amendis.
 
-## Get started
+The application allows companies to view available tenders, submit bids with the required technical and financial documents, and manage their submissions. Administrators can review and approve tenders before they are published.
 
-1. Install dependencies
+## How It Works
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+Administrator / Company
+        ↓
+   Create Tender
+        ↓
+   Review & Approval
+        ↓
+   Published Tender
+        ↓
+ Companies Submit Bids
+        ↓
+    Bid Evaluation
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The system uses **role-based access control (RBAC)** to provide different permissions for administrators and company users. Authentication is handled using JWT, while submitted documents are securely handled through the backend API.
 
-## Learn more
+## Technologies Used
 
-To learn more about developing your project with Expo, look at the following resources:
+### Backend
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
+- PostgreSQL / Neon
+- JWT Authentication
+- bcrypt
+- Zod
+- Multer
+- Swagger / OpenAPI
+- Vitest & Supertest
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Mobile Application
+- React Native
+- Expo
+- TypeScript
+- Expo Router
+- Axios
+- Expo SecureStore
+- Expo Document Picker
 
-## Join the community
+## Architecture
 
-Join our community of developers creating universal apps.
+The project consists of two main parts:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+Site_Achat_Amendis_App/
+│
+├── Mini_Tender_API/       # REST API & Backend
+│
+├── mini-tender-mobile/    # React Native Mobile App
+│
+└── README.md
+```
+
+The mobile application communicates with the backend through a RESTful API. The backend handles authentication, authorization, business logic, database operations, tender management, bid submissions, and document uploads.
+
+## Main Features
+
+- User authentication and JWT sessions
+- Role-Based Access Control
+- Tender creation and management
+- Administrative tender approval
+- Tender listing and details
+- Company bid submission
+- Technical and financial document uploads
+- My Bids management
+- PostgreSQL database with Prisma
+- Swagger API documentation
+- Automated backend integration tests
+- Mobile interface for Android
+
+## Project Purpose
+
+This project was developed as part of a software engineering internship, with the first phase focusing on **backend development** and the second phase focusing on the **React Native mobile application**.
