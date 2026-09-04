@@ -1,0 +1,74 @@
+// 1. Storage Keys (Where inside the phone's encrypted vault we save the token)
+const TOKEN_KEY = "auth_token";
+const USER_KEY = "auth_user";
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  // 2. Global State (Holds login state in memory while app is open)
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // 3. Auto-Login when App Opens
+  useEffect(() => {
+    restoreSession();
+  }, []);
+
+  const restoreSession = async () => {
+    try {
+      // Check phone's safe (SecureStore) for existing token
+      const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+      const storedUser = await SecureStore.getItemAsync(USER_KEY);
+
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+        // Attach token to Axios headers so API requests work immediately
+        api.defaults.headers.common.Authorization = `Bearer ${storedToken}`;
+      }
+    } catch (error) {
+      console.error("Failed to restore session:", error);
+    } finally {
+      setLoading(false); // Done checking disk storage
+    }
+  };
+
+  // 4. The Login Method (Triggered when user hits Login button)
+  const login = async (email: string, password: string) => {
+    // Send credentials to backend
+    const response = await api.post("/auth/login", { email, password });
+    
+    // Destructure JWT token and user details from backend JSON response
+    const { token, user } = response.data;
+
+    // Save token & user to phone's encrypted disk safe
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
+
+    // Attach token globally to Axios instance
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    // Update global state in memory (triggers app re-render)
+    setToken(token);
+    setUser(user);
+  };
+
+  // 5. The Logout Method
+  const logout = async () => {
+    // Erase keys from phone's encrypted disk safe
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await SecureStore.deleteItemAsync(USER_KEY);
+
+    // Remove Axios header
+    delete api.defaults.headers.common.Authorization;
+
+    // Reset memory state to null
+    setToken(null);
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
